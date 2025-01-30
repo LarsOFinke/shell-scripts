@@ -1,5 +1,8 @@
 #!/bin/bash
 
+### IMPORTANT ###
+## This script requires a parameter, e.g. "backup_home TestUser" ##
+
 name=$1
 from=/home/$name/
 to=/backups_lab/home/$name/
