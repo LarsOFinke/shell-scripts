@@ -1,0 +1,14 @@
+### IMPORTANT ###
+## THIS SCRIPT REQUIRES A PARAMETER AND IS MEANT TO BE USED AS A CRONJOB ##
+# e.g. "01 03 * * *  root  /home/TestUser/bin/backup_home.cron TestUser" #
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+name=$1
+from=/home/$name/
+to=/backups_lab/home/$name/
+today=$(date +"%Y-%m-%d")
+file_name="backup_home_${name}_${today}.tar.bz2"
+
+tar -cjf "$to$file_name" -C "$from" .
