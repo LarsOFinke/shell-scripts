@@ -1,0 +1,39 @@
+### IMPORTANT ###
+## THIS SCRIPT IS MEANT TO BE USED AS A CRONJOB ##
+# e.g. "01 03 * * * /home/TestUser/bin/capture_traffic.cron" #
+
+
+#!/bin/bash
+
+
+# Set the required variables	# REPLACE PATHS WITH YOUR ACTUAL
+from=/home/User/server/tcpdump.pcap	
+to=/backups_lab/tcpdumps/
+today=$(date +"%Y-%m-%d")
+file_name="tcpdump_$today.pcap.tar.bz2"
+
+
+# Get the PIDs of tcpdump
+# PID=$(ps aux | grep '[t]cpdump' | awk '{print $2}' | sort -r)
+PID=$(pgrep -f tcpdump)
+
+# Check if PID was found, if yes -> kill the PIDs
+if [ -z "$PID" ]; then
+	echo "No current processes"
+else
+	sudo kill $PID
+fi
+
+# Check if old pcap exists, if yes -> transfer to backups
+if [ -n "$from" ]; then
+	if [ ! "$tar -cjf $file_name $from ." ]; then
+		echo ""
+	else
+		tar -cjf $file_name $from .
+		sudo mv "$file_name" "$to$file_name"
+		sudo rm $from
+	fi
+fi
+
+
+sudo tcpdump -i eth0 -w $from 'port 22 or port 80 or port 443'
